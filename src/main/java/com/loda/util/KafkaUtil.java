@@ -1,5 +1,8 @@
 package com.loda.util;
 
+import org.apache.flink.api.common.serialization.SimpleStringSchema;
+import org.apache.flink.connector.kafka.source.KafkaSource;
+import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
@@ -48,6 +51,24 @@ public class KafkaUtil {
         kafkaProducer.send(banRecordBlue);
         //刷出消息
         kafkaProducer.flush();
+    }
+
+    /**
+     * 获取Flink的KafkaSource
+     *
+     * @param topicName
+     * @param groupId
+     * @return
+     */
+    public static KafkaSource<String> getKafkaSource(String topicName, String groupId) {
+        KafkaSource<String> source = KafkaSource.<String>builder()
+                .setBootstrapServers("node01:9092,node02:9092,node03:9092")
+                .setTopics(topicName)
+                .setGroupId(groupId)
+                .setStartingOffsets(OffsetsInitializer.latest())
+                .setValueOnlyDeserializer(new SimpleStringSchema())
+                .build();
+        return source;
     }
 
 
