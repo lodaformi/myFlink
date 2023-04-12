@@ -33,7 +33,7 @@ public class Hello02CountWindow {
 
         source.map(word->Tuple2.of(word.split(":")[0], Integer.valueOf(word.split(":")[1])), Types.TUPLE(Types.STRING, Types.INT))
                 .keyBy(tuple2->tuple2.f0)
-                .countWindow(3,2)
+                .countWindow(5,2)
                 .reduce((value1, value2) -> {
                     value1.f0 = value1.f0 +"__"+ value2.f0;
                     value1.f1 = value1.f1 + value2.f1;

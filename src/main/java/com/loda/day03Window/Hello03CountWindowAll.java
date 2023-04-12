@@ -30,7 +30,7 @@ public class Hello03CountWindowAll {
 //                .print("countWindowAll--Tumbling: ").setParallelism(1);
 
         source.map(word->Tuple2.of(word.split(":")[0], Integer.valueOf(word.split(":")[1])), Types.TUPLE(Types.STRING, Types.INT))
-                .countWindowAll(3,2)
+                .countWindowAll(5,2)
                 .reduce((value1, value2) -> {
                     value1.f0 = value1.f0 +"__"+ value2.f0;
                     value1.f1 = value1.f1 + value2.f1;

@@ -26,9 +26,23 @@ public class Hello05TimeWindowSession {
         DataStreamSource<String> source = environment.socketTextStream("localhost", 9999);
 
         //transformation
+//        source.map(word-> Tuple2.of(word.split(":")[0], Integer.valueOf(word.split(":")[1])), Types.TUPLE(Types.STRING, Types.INT))
+//                .keyBy(tuple2->tuple2.f0)
+//                .window(ProcessingTimeSessionWindows.withGap(Time.seconds(5)))
+//                .reduce((value1, value2) -> {
+//                    value1.f0 = value1.f0 +"__"+ value2.f0;
+//                    value1.f1 = value1.f1 + value2.f1;
+//                    return value1;
+//                })
+//                .map(tuple2->{
+//                    tuple2.f0 = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy年MM月dd日HH时mm分ss秒SSS毫秒")) + tuple2.f0;
+//                    return tuple2;
+//                }, Types.TUPLE(Types.STRING, Types.INT))
+//                .print("TimeWindowAll--SlidingProcessing: ").setParallelism(1);
+
+
         source.map(word-> Tuple2.of(word.split(":")[0], Integer.valueOf(word.split(":")[1])), Types.TUPLE(Types.STRING, Types.INT))
-                .keyBy(tuple2->tuple2.f0)
-                .window(ProcessingTimeSessionWindows.withGap(Time.seconds(5)))
+                .windowAll(ProcessingTimeSessionWindows.withGap(Time.seconds(5)))
                 .reduce((value1, value2) -> {
                     value1.f0 = value1.f0 +"__"+ value2.f0;
                     value1.f1 = value1.f1 + value2.f1;
@@ -38,7 +52,7 @@ public class Hello05TimeWindowSession {
                     tuple2.f0 = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy年MM月dd日HH时mm分ss秒SSS毫秒")) + tuple2.f0;
                     return tuple2;
                 }, Types.TUPLE(Types.STRING, Types.INT))
-                .print("timeWindow--SlidingProcessing: ").setParallelism(1);
+                .print("TimeWindowAll--SessionProcessing: ").setParallelism(1);
         //sink
 
         //env exec
