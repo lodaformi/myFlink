@@ -52,7 +52,7 @@ public class Hello17Partitioner {
               }
           }).print("CustomPartitioner ").setParallelism(4);
 
-          // ??? 怎么对应上面的传参
+          //怎么对应上面的传参
           mapUpper.partitionCustom((k, p) -> p-1, v->v).print("CustomPartitioner ").setParallelism(4);
 
         //env exec

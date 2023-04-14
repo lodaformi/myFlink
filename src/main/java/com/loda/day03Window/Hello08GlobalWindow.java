@@ -28,7 +28,7 @@ public class Hello08GlobalWindow {
         StreamExecutionEnvironment environment = StreamExecutionEnvironment.getExecutionEnvironment();
         //获取数据源-admin:3
         DataStreamSource<String> source = environment.socketTextStream("localhost", 9999);
-        //GlobalWindow
+        //GlobalWindow -- keyed
         source.map(word -> Tuple2.of(word.split(":")[0], Integer.parseInt(word.split(":")[1])), Types.TUPLE(Types.STRING, Types.INT))
                 .keyBy(tuple2 -> tuple2.f0)
                 .window(GlobalWindows.create())
@@ -39,6 +39,7 @@ public class Hello08GlobalWindow {
                     return value1;
                 }).print("GlobalWindows: ").setParallelism(1);
 
+        // no-keyed
         source.map(word -> Tuple2.of(word.split(":")[0], Integer.parseInt(word.split(":")[1])), Types.TUPLE(Types.STRING, Types.INT))
                 .windowAll(GlobalWindows.create())
                 .trigger(PurgingTrigger.of(CountTrigger.of(5)))

@@ -29,17 +29,18 @@ public class Hello12WindowFunctionByWindow {
         source.map(value -> Tuple2.of(value.split(":")[0], Integer.parseInt(value.split(":")[1])), Types.TUPLE(Types.STRING, Types.INT))
                 .keyBy(value -> value.f0)
                 .window(TumblingProcessingTimeWindows.of(Time.seconds(5)))
-                        .apply(new WindowFunction<Tuple2<String, Integer>, Tuple2<String, Integer>, String, TimeWindow>() {
-                            @Override
-                            public void apply(String s, TimeWindow window, Iterable<Tuple2<String, Integer>> input, Collector<Tuple2<String, Integer>> out) throws Exception {
-                                System.out.println("Hello12WindowFunctionByWindow.apply"+"全量计算"+window);
-                                int sum = 0;
-                                for (Tuple2<String, Integer> tuple2 : input) {
-                                    sum += tuple2.f1;
-                                }
-                                out.collect(Tuple2.of(s, sum));
-                            }
-                        }).print("timeWindow--TumblingProcessing: ").setParallelism(1);
+                //全量计算
+                .apply(new WindowFunction<Tuple2<String, Integer>, Tuple2<String, Integer>, String, TimeWindow>() {
+                    @Override
+                    public void apply(String s, TimeWindow window, Iterable<Tuple2<String, Integer>> input, Collector<Tuple2<String, Integer>> out) throws Exception {
+                        System.out.println("Hello12WindowFunctionByWindow.apply"+"全量计算"+window);
+                        int sum = 0;
+                        for (Tuple2<String, Integer> tuple2 : input) {
+                            sum += tuple2.f1;
+                        }
+                        out.collect(Tuple2.of(s, sum));
+                    }
+                }).print("timeWindow--TumblingProcessing: ").setParallelism(1);
 
         //sink
 

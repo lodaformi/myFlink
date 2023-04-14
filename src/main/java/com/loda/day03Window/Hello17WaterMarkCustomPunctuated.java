@@ -17,19 +17,23 @@ import java.util.Locale;
 
 /**
  * @Author loda
- * @Date 2023/4/12 20:25
+ * @Date 2023/4/14 17:09
  * @Description TODO(一句话描述该类的功能)
  * @Version 1.0
  */
-public class Hello15WaterMarkCustomPeriodInOrder {
+public class Hello17WaterMarkCustomPunctuated {
     public static void main(String[] args) throws Exception {
         //生产Kafka有序数据数据--模拟弹幕[用户名:消息:时间戳]
         new Thread(() -> {
             String uname = RandomStringUtils.randomAlphabetic(8).toLowerCase(Locale.ROOT);
             for (int i = 1000; i < 2000; i++) {
-                KafkaUtil.sendMsg("loda", uname + ":" + i + ":" + System.currentTimeMillis());
+                if (Math.random() <= 0.99) {
+                    KafkaUtil.sendMsg("loda", uname + ":" + i + ":" + System.currentTimeMillis());
+                } else {
+                    KafkaUtil.sendMsg("loda", uname +  i + ":GameOver:" + System.currentTimeMillis());
+                }
                 try {
-                    Thread.sleep(50);
+                    Thread.sleep(20);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -45,14 +49,14 @@ public class Hello15WaterMarkCustomPeriodInOrder {
         //transformations
         source.map(value -> Tuple3.of(value.split(":")[0], value.split(":")[1],
                         Long.parseLong(value.split(":")[2])), Types.TUPLE(Types.STRING, Types.STRING, Types.LONG))
-                .assignTimestampsAndWatermarks(new MyPeriodicWaterMarkStrategy())
+                .assignTimestampsAndWatermarks(new MyPunctuatedWaterMarkStratege())
                 .keyBy(value -> value.f0)
                 .window(TumblingEventTimeWindows.of(Time.seconds(3)))
                 .apply(new WindowFunction<Tuple3<String, String, Long>, String, String, TimeWindow>() {
                     @Override
                     public void apply(String s, TimeWindow window, Iterable<Tuple3<String, String, Long>> input, Collector<String> out) throws Exception {
-//                        System.out.println("Hello15WaterMarkCustomPeriodInOrder.apply");
-                        StringBuffer sb  = new StringBuffer();
+//                        System.out.println("Hello13WaterMarkInOrder.apply");
+                        StringBuffer sb = new StringBuffer();
                         sb.append(" [ " + s + " ] ");
                         for (Tuple3<String, String, Long> tuple3 : input) {
                             sb.append(" [ " + tuple3.f1 + "--" + tuple3.f2 + " ] ");
@@ -70,33 +74,24 @@ public class Hello15WaterMarkCustomPeriodInOrder {
     }
 }
 
-//<Tuple3<String, String, Long>>传入数据的泛型
-class MyPeriodicWaterMarkStrategy implements WatermarkStrategy<Tuple3<String, String, Long>> {
+//事件触发水位线
+class MyPunctuatedWaterMarkStratege implements WatermarkStrategy<Tuple3<String, String, Long>> {
     @Override
     public WatermarkGenerator<Tuple3<String, String, Long>> createWatermarkGenerator(WatermarkGeneratorSupplier.Context context) {
-        return new MyPeriodicWaterMarkGenerator();
+        return new MyPunctuatedWaterMarkGenerator();
     }
 
-    /**
-     * 自定义水位线生成器[有序]
-     */
-    private class  MyPeriodicWaterMarkGenerator implements WatermarkGenerator<Tuple3<String, String, Long>> {
-        private Long MAX_TS = Long.MIN_VALUE;
-
-        //每个事件都要触发一次onEvent函数
+    private class MyPunctuatedWaterMarkGenerator implements WatermarkGenerator<Tuple3<String, String, Long>> {
         @Override
         public void onEvent(Tuple3<String, String, Long> event, long eventTimestamp, WatermarkOutput output) {
-            System.out.println("当前[" + event + "][" + MAX_TS + "]");
-            MAX_TS = event.f2;
-             System.out.println("当前[" + event + "][" + MAX_TS + "]");
+            if ("GameOver".equals(event.f1)) {
+                output.emitWatermark(new Watermark(event.f2 - 1L));
+            }
         }
 
-        //周期发射watermark，默认为200ms发射一次
         @Override
         public void onPeriodicEmit(WatermarkOutput output) {
-            System.out.println("MyPeriodicWaterMarkGenerator.onPeriodicEmit ["+MAX_TS+"]");
-            output.emitWatermark(new Watermark(MAX_TS-1L));
-            System.out.println("MyPeriodicWaterMarkGenerator.onPeriodicEmit ["+(MAX_TS-1L)+"]");
+            //什么也不做
         }
     }
 }

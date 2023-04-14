@@ -42,6 +42,7 @@ public class Hello12WindowFunctionByProcess {
                 })
                 .print("timeWindow--TumblingProcessing: ").setParallelism(1);
 
+
         //sink
 
         //env exec
