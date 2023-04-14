@@ -69,6 +69,13 @@
     <artifactId>mysql-connector-java</artifactId>
     <version>8.0.18</version>
   </dependency>
+
+    <!-- Hadoop Client -->
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-client</artifactId>
+      <version>3.1.2</version>
+    </dependency>
   <!-- 状态后端 rocksdb-->
     <dependency>
       <groupId>org.apache.flink</groupId>
