@@ -6,8 +6,12 @@ import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.assigners.GlobalWindows;
 import org.apache.flink.streaming.api.windowing.evictors.CountEvictor;
+import org.apache.flink.streaming.api.windowing.evictors.Evictor;
 import org.apache.flink.streaming.api.windowing.triggers.CountTrigger;
+import org.apache.flink.streaming.api.windowing.triggers.Trigger;
+import org.apache.flink.streaming.api.windowing.triggers.TriggerResult;
 import org.apache.flink.streaming.api.windowing.windows.GlobalWindow;
+import org.apache.flink.streaming.runtime.operators.windowing.TimestampedValue;
 
 /**
  * @Author loda
@@ -28,7 +32,39 @@ public class Hello19TriggerAndEvictor {
                 .keyBy(value -> value.f0)
                 .window(GlobalWindows.create())
                 .trigger(CountTrigger.of(5))
+//                .trigger(new Trigger<Tuple2<String, Integer>, GlobalWindow>() {
+//                    @Override
+//                    public TriggerResult onElement(Tuple2<String, Integer> element, long timestamp, GlobalWindow window, TriggerContext ctx) throws Exception {
+//                        return null;
+//                    }
+//
+//                    @Override
+//                    public TriggerResult onProcessingTime(long time, GlobalWindow window, TriggerContext ctx) throws Exception {
+//                        return null;
+//                    }
+//
+//                    @Override
+//                    public TriggerResult onEventTime(long time, GlobalWindow window, TriggerContext ctx) throws Exception {
+//                        return null;
+//                    }
+//
+//                    @Override
+//                    public void clear(GlobalWindow window, TriggerContext ctx) throws Exception {
+//
+//                    }
+//                })
                 .evictor(CountEvictor.of(5))
+//                .evictor(new Evictor<Tuple2<String, Integer>, GlobalWindow>() {
+//                    @Override
+//                    public void evictBefore(Iterable<TimestampedValue<Tuple2<String, Integer>>> elements, int size, GlobalWindow window, EvictorContext evictorContext) {
+//
+//                    }
+//
+//                    @Override
+//                    public void evictAfter(Iterable<TimestampedValue<Tuple2<String, Integer>>> elements, int size, GlobalWindow window, EvictorContext evictorContext) {
+//
+//                    }
+//                })
                 .reduce((v1, v2)->{
                     v1.f0 = v1.f0 +"__" + v2.f0;
                     v1.f1 += v2.f1;
