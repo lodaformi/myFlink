@@ -31,6 +31,7 @@ public class Hello08IntervalJoin {
                 KafkaUtil.sendMsg("tGoodsInfo", i + ":info" + i + ":" + System.currentTimeMillis());
                 //让线程休眠一下
                 try {
+                    //随机0-3秒，模拟数据延迟
                     Thread.sleep((int) (Math.random() * 3000));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -44,6 +45,7 @@ public class Hello08IntervalJoin {
                 KafkaUtil.sendMsg("tGoodsPrice", i + ":" + i + ":" + System.currentTimeMillis());
                 //让线程休眠一下
                 try {
+                    //随机0-3秒，模拟数据延迟
                     Thread.sleep((int) (Math.random() * 3000));
                 } catch (InterruptedException e) {
                     e.printStackTrace();

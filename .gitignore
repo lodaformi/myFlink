@@ -1,7 +1,8 @@
 ### Java template
 .idea
 target
-ckpt
+ckpt/
+*.iml
 # Compiled class file
 *.class
 

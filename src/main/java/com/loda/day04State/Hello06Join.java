@@ -11,7 +11,6 @@ import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.api.windowing.assigners.SlidingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 
@@ -71,28 +70,28 @@ public class Hello06Join {
                 }));
 
         //TumblingEventTimeWindows全量窗口计算apply，只有apply
-//        goodsInfoStream.join(goodsPriceStream)
-//                .where(goodsInfo -> goodsInfo.f0)
-//                .equalTo(goodsPrice -> goodsPrice.f0)
-//                .window(TumblingEventTimeWindows.of(Time.seconds(10)))
-//                .apply(new JoinFunction<Tuple3<String, String, Long>, Tuple3<String, String, Long>, String>() {
-//                    @Override
-//                    public String join(Tuple3<String, String, Long> first, Tuple3<String, String, Long> second) throws Exception {
-//                        return "info [" + first + "] price[" + second + "]";
-//                    }
-//                }).print("TumblingEventTimeWindows");
-
-        //SlidingEventTimeWindows
         goodsInfoStream.join(goodsPriceStream)
                 .where(goodsInfo -> goodsInfo.f0)
                 .equalTo(goodsPrice -> goodsPrice.f0)
-                .window(SlidingEventTimeWindows.of(Time.seconds(10), Time.seconds(5)))
+                .window(TumblingEventTimeWindows.of(Time.seconds(10)))
                 .apply(new JoinFunction<Tuple3<String, String, Long>, Tuple3<String, String, Long>, String>() {
                     @Override
                     public String join(Tuple3<String, String, Long> first, Tuple3<String, String, Long> second) throws Exception {
                         return "info [" + first + "] price[" + second + "]";
                     }
-                }).print("SlidingEventTimeWindows--");
+                }).print("TumblingEventTimeWindows");
+
+        //SlidingEventTimeWindows
+//        goodsInfoStream.join(goodsPriceStream)
+//                .where(goodsInfo -> goodsInfo.f0)
+//                .equalTo(goodsPrice -> goodsPrice.f0)
+//                .window(SlidingEventTimeWindows.of(Time.seconds(10), Time.seconds(5)))
+//                .apply(new JoinFunction<Tuple3<String, String, Long>, Tuple3<String, String, Long>, String>() {
+//                    @Override
+//                    public String join(Tuple3<String, String, Long> first, Tuple3<String, String, Long> second) throws Exception {
+//                        return "info [" + first + "] price[" + second + "]";
+//                    }
+//                }).print("SlidingEventTimeWindows--");
 
         //sink
 

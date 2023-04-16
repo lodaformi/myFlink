@@ -31,9 +31,11 @@ public class Hello07CoGroup {
         new Thread(() -> {
             for (int i = 100; i < 200; i++) {
                 String goodName = RandomStringUtils.randomAlphabetic(8);
+                //模拟数据，4的倍数不生成tGoodsInfo信息
                 if (i%4 != 0) {
                     KafkaUtil.sendMsg("tGoodsInfo", goodName + ":info_" + i + ":" + System.currentTimeMillis());
                 }
+                //模拟数据，5的倍数不生成tGoodsPrice信息
                 if (i % 5 != 0) {
                     KafkaUtil.sendMsg("tGoodsPrice", goodName + ":price_" + i + ":" + (System.currentTimeMillis()-3000L));
                 }
@@ -91,7 +93,8 @@ public class Hello07CoGroup {
                                 for (Tuple3<String, String, Long> price : second) {
                                     System.out.println("price [ "+price.toString()+" ]");
                                 }
-                                    System.out.println("2222info [" + first + "] price[" + second + "]");
+                                //迭代器也可以这样直接输出
+                                System.out.println("2222info [" + first + "] price[" + second + "]");
                                 System.out.println("------------------------------------");
                             }
                         })

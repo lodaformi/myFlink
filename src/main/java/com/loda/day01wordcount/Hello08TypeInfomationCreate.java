@@ -1,4 +1,4 @@
-package com.loda.wordcount;
+package com.loda.day01wordcount;
 
 import org.apache.flink.api.common.typeinfo.TypeHint;
 import org.apache.flink.api.common.typeinfo.TypeInformation;

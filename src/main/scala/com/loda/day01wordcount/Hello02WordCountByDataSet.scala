@@ -1,4 +1,4 @@
-package com.loda.wordcount
+package com.loda.day01wordcount
 
 import org.apache.flink.api.scala._
 

@@ -1,6 +1,5 @@
-package com.loda.wordcount;
+package com.loda.day01wordcount;
 
-import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 

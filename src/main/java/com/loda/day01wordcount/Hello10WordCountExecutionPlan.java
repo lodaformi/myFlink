@@ -1,4 +1,4 @@
-package com.loda.wordcount;
+package com.loda.day01wordcount;
 
 import org.apache.flink.api.common.typeinfo.Types;
 import org.apache.flink.api.java.tuple.Tuple2;
@@ -12,7 +12,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
  * @Description TODO(一句话描述该类的功能)
  * @Version 1.0
  */
-public class Hello09WordCountByDataStream {
+public class Hello10WordCountExecutionPlan {
     public static void main(String[] args) throws Exception {
         //env
         StreamExecutionEnvironment environment = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -35,6 +35,6 @@ public class Hello09WordCountByDataStream {
         sum.print();
 
         //execute
-        environment.execute();
+        System.out.println(environment.getExecutionPlan());
     }
 }
