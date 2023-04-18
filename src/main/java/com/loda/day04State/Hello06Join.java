@@ -71,8 +71,11 @@ public class Hello06Join {
 
         //TumblingEventTimeWindows全量窗口计算apply，只有apply
         goodsInfoStream.join(goodsPriceStream)
+                //第一个流的字段
                 .where(goodsInfo -> goodsInfo.f0)
+                //匹配第二个流的字段
                 .equalTo(goodsPrice -> goodsPrice.f0)
+                //两个流中的数据在同一个窗口中才能匹配到
                 .window(TumblingEventTimeWindows.of(Time.seconds(10)))
                 .apply(new JoinFunction<Tuple3<String, String, Long>, Tuple3<String, String, Long>, String>() {
                     @Override
