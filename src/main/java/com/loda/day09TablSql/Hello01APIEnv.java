@@ -22,7 +22,7 @@ public class Hello01APIEnv {
         //不支持
 //        StreamTableEnvironment streamTableEnvironment1 = StreamTableEnvironment.create(environmentSettings);
 
-        //table env method 2
+        //recommend way: table env method 2
         StreamExecutionEnvironment environment = StreamExecutionEnvironment.getExecutionEnvironment();
         StreamTableEnvironment streamTableEnvironment = StreamTableEnvironment.create(environment);
     }

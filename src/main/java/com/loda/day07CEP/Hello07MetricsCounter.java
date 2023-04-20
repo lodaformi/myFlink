@@ -28,9 +28,8 @@ public class Hello07MetricsCounter {
                 .map(new MyCounter())
                 .keyBy(tuple2 -> tuple2.f0)
                 .sum(1)
+                //sink
                 .print();
-        //sink
-
 
         //env exec
         environment.execute("Hello07MetricsCounter" + System.currentTimeMillis());
@@ -51,7 +50,12 @@ class MyCounter extends RichMapFunction<String, Tuple2<String, Integer>> {
 
     @Override
     public void open(Configuration parameters) throws Exception {
-//        this.counter = getRuntimeContext().getMetricGroup().addGroup("lodaCs", "wewe").counter("Len0Counter");
+        // Creates a new MetricGroup and adds it to this groups sub-groups.
         this.counter = getRuntimeContext().getMetricGroup().addGroup("lodaCs").counter("Len0Counter");
+        //Creates a new key-value MetricGroup pair.
+        // The key group is added to this groups sub-groups, while the value
+        // group is added to the key group's sub-groups.
+        // This method returns the value group.
+        //this.counter = getRuntimeContext().getMetricGroup().addGroup("lodaCs", "wewe").counter("Len0Counter");
     }
 }

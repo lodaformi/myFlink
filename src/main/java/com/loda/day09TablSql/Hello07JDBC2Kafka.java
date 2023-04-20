@@ -51,7 +51,7 @@ public class Hello07JDBC2Kafka {
 
 
         // these two sentences both works well
-//        tableEnvironment.sqlQuery("select * from userTable").insertInto("KafkaSinkTable").execute();
-        tableEnvironment.executeSql("insert into KafkaSinkTable select * from userTable");
+        tableEnvironment.sqlQuery("select * from userTable").insertInto("KafkaSinkTable").execute();
+//        tableEnvironment.executeSql("insert into KafkaSinkTable select * from userTable");
     }
 }

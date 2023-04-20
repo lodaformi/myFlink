@@ -63,8 +63,6 @@ public class Hello02CEPPattern01 {
         })
         .times(2,5);
 
-
-
         Pattern<Emp, Emp> pattern3 = Pattern.<Emp>begin("start").where(new SimpleCondition<Emp>() {
             @Override
             public boolean filter(Emp value) throws Exception {

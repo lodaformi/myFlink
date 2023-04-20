@@ -51,6 +51,7 @@ public class Hello06ConnectorKafka {
         tableEnvironment.sqlQuery("select * from KafkaSourceTable").insertInto("KafkaSinkTable").execute();
 
       //  Unsupported SQL query!
+        // sqlQuery() only accepts a single SQL query of type SELECT, UNION, INTERSECT, EXCEPT, VALUES, and ORDER_BY.
 //        tableEnvironment.sqlQuery("insert into KafkaSinkTable " +
 //                "select * from  KafkaSourceTable").execute();
 

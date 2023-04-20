@@ -6,7 +6,6 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.table.api.DataTypes;
 import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.apache.flink.types.Row;
@@ -57,10 +56,10 @@ public class Hello03APIDataTypes {
         DataStreamSource<Row> rowDataStreamSource = environment.fromElements(
                 Row.ofKind(RowKind.INSERT, "Alice", 12),
                 Row.ofKind(RowKind.INSERT, "Bob", 5),
-                Row.ofKind(RowKind.UPDATE_BEFORE, "Alice", 12),
-                Row.ofKind(RowKind.UPDATE_AFTER, "Alice", 100)
+//                Row.ofKind(RowKind.UPDATE_BEFORE, "Alice", 12),
+                Row.ofKind(RowKind.UPDATE_AFTER, "Alice", 120)
         );
         Table rowTable = tableEnvironment.fromChangelogStream(rowDataStreamSource);
-//        rowTable.execute().print();
+        rowTable.execute().print();
     }
 }

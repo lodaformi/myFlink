@@ -75,7 +75,7 @@ public class Hello03CEPPattern02 {
 
 
         //match
-        PatternStream<Emp> patternStream = CEP.pattern(streamOperator, pattern3).inProcessingTime();
+        PatternStream<Emp> patternStream = CEP.pattern(streamOperator, pattern).inProcessingTime();
 
         //sink
         patternStream.process(new PatternProcessFunction<Emp, Emp>() {
