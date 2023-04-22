@@ -39,6 +39,9 @@ public class Hello07MetricsCounter {
 class MyCounter extends RichMapFunction<String, Tuple2<String, Integer>> {
 
     private transient Counter counter;
+//    Histogram
+//    Meter
+//    Gauge
 
     @Override
     public Tuple2<String, Integer> map(String value) throws Exception {
@@ -52,6 +55,7 @@ class MyCounter extends RichMapFunction<String, Tuple2<String, Integer>> {
     public void open(Configuration parameters) throws Exception {
         // Creates a new MetricGroup and adds it to this groups sub-groups.
         this.counter = getRuntimeContext().getMetricGroup().addGroup("lodaCs").counter("Len0Counter");
+
         //Creates a new key-value MetricGroup pair.
         // The key group is added to this groups sub-groups, while the value
         // group is added to the key group's sub-groups.
