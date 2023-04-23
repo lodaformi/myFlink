@@ -4,6 +4,9 @@ import com.loda.udf.MyUDFAggregateFunction;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 
+import static org.apache.flink.table.api.Expressions.$;
+import static org.apache.flink.table.api.Expressions.call;
+
 /**
  * @Author loda
  * @Date 2023/4/22 19:12
@@ -60,11 +63,17 @@ public class Hello27UDFAggregateFunction {
             |  price |  INT | FALSE |     |        |           |
             +--------+------+-------+-----+--------+-----------+
          */
+        //直接使用
+        tableEnvironment.from("t_order")
+                .groupBy($("type"))
+                .select($("type"),call(MyUDFAggregateFunction.class, $("weight"), $("price")))
+                .execute().print();
+
         // 注册函数
-        tableEnvironment.createTemporarySystemFunction("wAvg", new MyUDFAggregateFunction());
+//        tableEnvironment.createTemporarySystemFunction("wAvg", new MyUDFAggregateFunction());
 
         // 使用函数
         //wAvg(weight => INT NOT NULL, price => INT NOT NULL)
-        tableEnvironment.sqlQuery("SELECT type, wAvg(weight, price) FROM t_order group by type").execute().print();
+//        tableEnvironment.sqlQuery("SELECT type, wAvg(weight, price) FROM t_order group by type").execute().print();
     }
 }

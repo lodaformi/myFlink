@@ -37,6 +37,12 @@ public class Hello28UDFTableAggregateFunction {
         //普通查询
         // tableEnvironment.sqlQuery("select * from t_order").execute().print();
 
+        //直接使用，用不了，怎么回事？？？
+//        tableEnvironment.from("t_order")
+//                .groupBy($("type"))
+//                .select($("type"), call(MyUDFTableAggregateFunction.class, $("price")))
+//                .execute().print();
+
         tableEnvironment.createTemporarySystemFunction("top2", new MyUDFTableAggregateFunction());
 
         // 使用函数

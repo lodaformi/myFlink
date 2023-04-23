@@ -36,6 +36,4 @@ public class MyUDFTableAggregateFunction extends TableAggregateFunction<String, 
             out.collect("First[ " + acc.f0 + " ], Second[ " + acc.f1 + " ]");
         }
     }
-
-
 }

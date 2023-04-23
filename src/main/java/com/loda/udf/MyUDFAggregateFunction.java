@@ -19,6 +19,9 @@ public class MyUDFAggregateFunction extends AggregateFunction<Double, Tuple2<Int
         return Tuple2.of(0,0);
     }
 
+    //默认情况下，flink接收的不能为null的参数，例如：weight => INT NOT NULL
+    //在使用TableAPI和sql进行传参时，传入的可能是允许为null的值，所以此处是更改参数的默认设置，
+    //或者在数据源限制，例如INT NOT NULL，两种方式灵活运用
     @FunctionHint(
             input = {@DataTypeHint("INT"), @DataTypeHint("INT")}
     )
