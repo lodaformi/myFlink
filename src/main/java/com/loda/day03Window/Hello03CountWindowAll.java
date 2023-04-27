@@ -20,7 +20,9 @@ public class Hello03CountWindowAll {
         DataStreamSource<String> source = environment.socketTextStream("localhost", 9999);
 
         //transformation
-//        source.map(word-> Tuple2.of(word.split(":")[0], Integer.valueOf(word.split(":")[1])), Types.TUPLE(Types.STRING, Types.INT))
+        //滚动窗口，只要数据（不区分key）达到3个就进行reduce
+//        source.map(word-> Tuple2.of(word.split(":")[0], Integer.valueOf(word.split(":")[1])),
+//                        Types.TUPLE(Types.STRING, Types.INT))
 //                .countWindowAll(3)
 //                .reduce((value1, value2) -> {
 //                    value1.f0 = value1.f0 +"__"+ value2.f0;
@@ -29,7 +31,8 @@ public class Hello03CountWindowAll {
 //                })
 //                .print("countWindowAll--Tumbling: ").setParallelism(1);
 
-        source.map(word->Tuple2.of(word.split(":")[0], Integer.valueOf(word.split(":")[1])), Types.TUPLE(Types.STRING, Types.INT))
+        //滑动窗口
+        source.map(word-> Tuple2.of(word.split(":")[0], Integer.valueOf(word.split(":")[1])), Types.TUPLE(Types.STRING, Types.INT))
                 .countWindowAll(5,2)
                 .reduce((value1, value2) -> {
                     value1.f0 = value1.f0 +"__"+ value2.f0;

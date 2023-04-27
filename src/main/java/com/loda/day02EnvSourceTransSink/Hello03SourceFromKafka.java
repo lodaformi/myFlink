@@ -41,7 +41,10 @@ public class Hello03SourceFromKafka {
                 .setValueOnlyDeserializer(new SimpleStringSchema())
                 .build();
 
-        DataStreamSource<String> source = environment.fromSource(kafkaSourceSetting, WatermarkStrategy.noWatermarks(), "Kafka Source");
+//        environment.addSource();
+//        environment.fromSource()
+        DataStreamSource<String> source = environment.fromSource(kafkaSourceSetting,
+                WatermarkStrategy.noWatermarks(), "Kafka Source");
 
         //transformations
         source.map(word->word.toUpperCase()).print();

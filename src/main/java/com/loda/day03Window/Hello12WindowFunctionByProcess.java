@@ -5,7 +5,6 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.windowing.ProcessWindowFunction;
-import org.apache.flink.streaming.api.functions.windowing.WindowFunction;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
@@ -31,7 +30,8 @@ public class Hello12WindowFunctionByProcess {
                 .window(TumblingProcessingTimeWindows.of(Time.seconds(5)))
                 .process(new ProcessWindowFunction<Tuple2<String, Integer>, Tuple2<String, Integer>, String, TimeWindow>() {
                     @Override
-                    public void process(String s, ProcessWindowFunction<Tuple2<String, Integer>, Tuple2<String, Integer>, String, TimeWindow>.Context context, Iterable<Tuple2<String, Integer>> elements, Collector<Tuple2<String, Integer>> out) throws Exception {
+                    public void process(String s, ProcessWindowFunction<Tuple2<String, Integer>, Tuple2<String, Integer>, String, TimeWindow>.Context context,
+                                        Iterable<Tuple2<String, Integer>> elements, Collector<Tuple2<String, Integer>> out) throws Exception {
                         System.out.println("Hello12WindowFunctionByWindowProcess.process"+"全量计算"+context.window());
                         int sum = 0;
                         for (Tuple2<String, Integer> tuple2 : elements) {
@@ -41,7 +41,6 @@ public class Hello12WindowFunctionByProcess {
                     }
                 })
                 .print("timeWindow--TumblingProcessing: ").setParallelism(1);
-
 
         //sink
 

@@ -4,7 +4,6 @@ import org.apache.flink.api.common.typeinfo.Types;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.api.functions.windowing.AggregateApplyWindowFunction;
 import org.apache.flink.streaming.api.functions.windowing.WindowFunction;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
@@ -32,7 +31,8 @@ public class Hello12WindowFunctionByWindow {
                 //全量计算
                 .apply(new WindowFunction<Tuple2<String, Integer>, Tuple2<String, Integer>, String, TimeWindow>() {
                     @Override
-                    public void apply(String s, TimeWindow window, Iterable<Tuple2<String, Integer>> input, Collector<Tuple2<String, Integer>> out) throws Exception {
+                    public void apply(String s, TimeWindow window, Iterable<Tuple2<String, Integer>> input,
+                                      Collector<Tuple2<String, Integer>> out) throws Exception {
                         System.out.println("Hello12WindowFunctionByWindow.apply"+"全量计算"+window);
                         int sum = 0;
                         for (Tuple2<String, Integer> tuple2 : input) {

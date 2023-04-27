@@ -28,8 +28,10 @@ public class Hello05SourceCustomRich {
         DataStreamSource<String> source = environment.addSource(new myCustomSourceRich("data/secret.txt")).setParallelism(3);
         //DataStreamSource<String> source = environment.fromElements("aa","bb");
 
+//        source.rebalance().map(value -> value.toUpperCase()).print("source--").setParallelism(1);
+
         //transformations
-        source.map(new RichMapFunction<String, String>() {
+        source.rebalance().map(new RichMapFunction<String, String>() {
             @Override
             //代码运行的时候自动设置的上下文环境
             public void setRuntimeContext(RuntimeContext t) {
@@ -69,7 +71,7 @@ public class Hello05SourceCustomRich {
             public String map(String value) throws Exception {
                 return value.toUpperCase() + ":" + getRuntimeContext().getIndexOfThisSubtask();
             }
-        }).setParallelism(3).print();
+        }).setParallelism(2).print();
         
         //sink
 

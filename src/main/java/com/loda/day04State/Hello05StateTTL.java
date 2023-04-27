@@ -61,6 +61,7 @@ class MyTTL implements MapFunction<String, String>, CheckpointedFunction {
     @Override
     public void initializeState(FunctionInitializationContext context) throws Exception {
         StateTtlConfig stateTtlConfig = StateTtlConfig.newBuilder(Time.seconds(60))
+                .setTtl(Time.seconds(10))
                 //更新策略
                 .setUpdateType(StateTtlConfig.UpdateType.OnReadAndWrite)
                 //失效状态的可见性

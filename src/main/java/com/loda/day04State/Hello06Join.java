@@ -11,7 +11,7 @@ import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
+import org.apache.flink.streaming.api.windowing.assigners.EventTimeSessionWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 
 import java.time.Duration;
@@ -29,7 +29,7 @@ public class Hello06Join {
             for (int i = 100; i < 200; i++) {
                 String goodName = RandomStringUtils.randomAlphabetic(8);
                 KafkaUtil.sendMsg("tGoodsInfo", goodName + ":info_" + i + ":" + System.currentTimeMillis());
-                KafkaUtil.sendMsg("tGoodsPrice", goodName + ":price_" + i + ":" + (System.currentTimeMillis()-3000L));
+                KafkaUtil.sendMsg("tGoodsPrice", goodName + ":price_" + i + ":" + (System.currentTimeMillis() - 3000L));
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -62,27 +62,27 @@ public class Hello06Join {
                     return Tuple3.of(strings[0], strings[1], Long.parseLong(strings[2]));
                 }, Types.TUPLE(Types.STRING, Types.STRING, Types.LONG))
                 .assignTimestampsAndWatermarks(WatermarkStrategy.<Tuple3<String, String, Long>>forBoundedOutOfOrderness(Duration.ofSeconds(3))
-                .withTimestampAssigner(new SerializableTimestampAssigner<Tuple3<String, String, Long>>() {
-                    @Override
-                    public long extractTimestamp(Tuple3<String, String, Long> element, long recordTimestamp) {
-                        return element.f2;
-                    }
-                }));
+                        .withTimestampAssigner(new SerializableTimestampAssigner<Tuple3<String, String, Long>>() {
+                            @Override
+                            public long extractTimestamp(Tuple3<String, String, Long> element, long recordTimestamp) {
+                                return element.f2;
+                            }
+                        }));
 
         //TumblingEventTimeWindows全量窗口计算apply，只有apply
-        goodsInfoStream.join(goodsPriceStream)
-                //第一个流的字段
-                .where(goodsInfo -> goodsInfo.f0)
-                //匹配第二个流的字段
-                .equalTo(goodsPrice -> goodsPrice.f0)
-                //两个流中的数据在同一个窗口中才能匹配到
-                .window(TumblingEventTimeWindows.of(Time.seconds(10)))
-                .apply(new JoinFunction<Tuple3<String, String, Long>, Tuple3<String, String, Long>, String>() {
-                    @Override
-                    public String join(Tuple3<String, String, Long> first, Tuple3<String, String, Long> second) throws Exception {
-                        return "info [" + first + "] price[" + second + "]";
-                    }
-                }).print("TumblingEventTimeWindows");
+//        goodsInfoStream.join(goodsPriceStream)
+//                //第一个流的字段
+//                .where(goodsInfo -> goodsInfo.f0)
+//                //匹配第二个流的字段
+//                .equalTo(goodsPrice -> goodsPrice.f0)
+//                //两个流中的数据在同一个窗口中才能匹配到
+//                .window(TumblingEventTimeWindows.of(Time.seconds(10)))
+//                .apply(new JoinFunction<Tuple3<String, String, Long>, Tuple3<String, String, Long>, String>() {
+//                    @Override
+//                    public String join(Tuple3<String, String, Long> first, Tuple3<String, String, Long> second) throws Exception {
+//                        return "info [" + first + "] price[" + second + "]";
+//                    }
+//                }).print("TumblingEventTimeWindows");
 
         //SlidingEventTimeWindows
 //        goodsInfoStream.join(goodsPriceStream)
@@ -95,6 +95,17 @@ public class Hello06Join {
 //                        return "info [" + first + "] price[" + second + "]";
 //                    }
 //                }).print("SlidingEventTimeWindows--");
+
+        goodsInfoStream.join(goodsPriceStream)
+                .where(goodsInfo -> goodsInfo.f0)
+                .equalTo(goodsPrice -> goodsPrice.f0)
+                .window(EventTimeSessionWindows.withGap(Time.seconds(5)))
+                .apply(new JoinFunction<Tuple3<String, String, Long>, Tuple3<String, String, Long>, String>() {
+                    @Override
+                    public String join(Tuple3<String, String, Long> first, Tuple3<String, String, Long> second) throws Exception {
+                        return "info [" + first + "] price[" + second + "]";
+                    }
+                }).print("sessionWindow--");
 
         //sink
 

@@ -13,10 +13,10 @@ import org.apache.flink.streaming.api.functions.co.CoMapFunction;
  */
 public class Hello21ConnectOperator {
     public static void main(String[] args) throws Exception {
-//获取程序运行的环境
+        //获取程序运行的环境
         StreamExecutionEnvironment environment =
                 StreamExecutionEnvironment.getExecutionEnvironment();
-//获取数据源
+        //获取数据源
         DataStreamSource<Integer> source1 = environment.fromElements(33, 35, 38, 45);
         DataStreamSource<String> source2 = environment.fromElements("no", "no", "yes", "no");
 
