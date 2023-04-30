@@ -43,32 +43,32 @@ public class Hello22TopNWindow {
 
         //查询5秒内 每个种类销售价格最高的前三名
         //get top3 price in one type of all types
-        tableEnvironment.sqlQuery("select * from ( " +
-                            "select *, " +
-                            "ROW_NUMBER() " +
-                            "OVER(PARTITION BY window_start, window_end " +
-                            "ORDER BY price desc) AS RNum " +
-                            "from table( " +
-                                    "TUMBLE(TABLE t_goods, DESCRIPTOR(ts), INTERVAL '5' SECONDS)) " +
-                            ") " +
-                        "where RNum <= 3")
-                .execute().print();
-
-        //查询5秒内 销售额最高的前三种类
-        //get top3 total sales price all types
 //        tableEnvironment.sqlQuery("select * from ( " +
-//                        "select *, " +
+//                            "select *, " +
 //                            "ROW_NUMBER() " +
 //                            "OVER(PARTITION BY window_start, window_end " +
-//                            "ORDER BY sp desc) AS RNum " +
-//                            "from ( " +
-//                                "select type, window_start, window_end, SUM(price) as sp from table ( " +
-//                                "TUMBLE(TABLE t_goods, DESCRIPTOR(ts), INTERVAL '5' SECONDS)) " +
-//                                "GROUP BY type, window_start, window_end" +
-//                            " )" +
-//                        ") " +
+//                            "ORDER BY price desc) AS RNum " +
+//                            "from table( " +
+//                                    "TUMBLE(TABLE t_goods, DESCRIPTOR(ts), INTERVAL '5' SECONDS)) " +
+//                            ") " +
 //                        "where RNum <= 3")
 //                .execute().print();
+
+        //查询5秒内 销售额最高的前三种类，要按照窗口和类型分组
+        //get top3 total sales price all types
+        tableEnvironment.sqlQuery("select * from ( " +
+                        "select *, " +
+                            "ROW_NUMBER() " +
+                            "OVER(PARTITION BY window_start, window_end " +
+                            "ORDER BY sp desc) AS RNum " +
+                            "from ( " +
+                                "select type, window_start, window_end, SUM(price) as sp from table ( " +
+                                "TUMBLE(TABLE t_goods, DESCRIPTOR(ts), INTERVAL '5' SECONDS)) " +
+                                "GROUP BY type, window_start, window_end" +
+                            " )" +
+                        ") " +
+                        "where RNum <= 3")
+                .execute().print();
 
 
     }
