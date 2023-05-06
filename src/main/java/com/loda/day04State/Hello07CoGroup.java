@@ -5,14 +5,12 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.flink.api.common.eventtime.SerializableTimestampAssigner;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.functions.CoGroupFunction;
-import org.apache.flink.api.common.functions.JoinFunction;
 import org.apache.flink.api.common.typeinfo.Types;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.api.windowing.assigners.SlidingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.util.Collector;
@@ -29,7 +27,7 @@ public class Hello07CoGroup {
     public static void main(String[] args) throws Exception {
         //data
         new Thread(() -> {
-            for (int i = 100; i < 200; i++) {
+            for (int i = 100; i < 500; i++) {
                 String goodName = RandomStringUtils.randomAlphabetic(8);
                 //模拟数据，4的倍数不生成tGoodsInfo信息
                 if (i%4 != 0) {
@@ -40,7 +38,7 @@ public class Hello07CoGroup {
                     KafkaUtil.sendMsg("tGoodsPrice", goodName + ":price_" + i + ":" + (System.currentTimeMillis()-3000L));
                 }
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -83,21 +81,31 @@ public class Hello07CoGroup {
         goodsInfoStream.coGroup(goodsPriceStream)
                 .where(goodsInfo -> goodsInfo.f0)
                 .equalTo(goodsPrice->goodsPrice.f0)
-                .window(TumblingEventTimeWindows.of(Time.seconds(10)))
-                        .apply(new CoGroupFunction<Tuple3<String, String, Long>, Tuple3<String, String, Long>, String>() {
-                            @Override
-                            public void coGroup(Iterable<Tuple3<String, String, Long>> first, Iterable<Tuple3<String, String, Long>> second, Collector<String> out) throws Exception {
-                                for (Tuple3<String, String, Long> info : first) {
-                                    System.out.println("info [ "+info.toString()+" ]");
-                                }
-                                for (Tuple3<String, String, Long> price : second) {
-                                    System.out.println("price [ "+price.toString()+" ]");
-                                }
-                                //迭代器也可以这样直接输出
-                                System.out.println("2222info [" + first + "] price[" + second + "]");
-                                System.out.println("------------------------------------");
+                .window(TumblingEventTimeWindows.of(Time.seconds(5)))
+                .apply(new CoGroupFunction<Tuple3<String, String, Long>, Tuple3<String, String, Long>, String>() {
+                    @Override
+                    public void coGroup(Iterable<Tuple3<String, String, Long>> first, Iterable<Tuple3<String, String, Long>> second, Collector<String> out) throws Exception {
+//                        for (Tuple3<String, String, Long> info : first) {
+//                            System.out.println("info [ "+info.toString()+" ]");
+//                        }
+//                        for (Tuple3<String, String, Long> price : second) {
+//                            System.out.println("price [ "+price.toString()+" ]");
+//                        }
+                        for (Tuple3<String, String, Long> info : first) {
+                            for (Tuple3<String, String, Long> price : second) {
+//                                if (info.f0.equals(price.f0)) {
+                                    System.out.println("+++++++++++++++++++++++++");
+                                    System.out.println("price [ "+price.toString()+" ]" + " info [ "+info.toString()+" ]");
+                                    System.out.println("+++++++++++++++++++++++++");
+//                                }
                             }
-                        })
+                        }
+
+                        //迭代器也可以这样直接输出
+//                        System.out.println("2222info [" + first + "] price[" + second + "]");
+                        System.out.println("------------------------------------");
+                    }
+                })
                 .print("coGroup--").setParallelism(1);
         //sink
 

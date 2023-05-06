@@ -1,15 +1,10 @@
 package com.loda.day02EnvSourceTransSink;
 
 import org.apache.flink.api.common.serialization.SerializationSchema;
-import org.apache.flink.api.common.typeinfo.Types;
-import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.configuration.Configuration;
-import org.apache.flink.streaming.api.datastream.ConnectedStreams;
 import org.apache.flink.streaming.api.datastream.DataStreamSink;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
-import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.api.functions.co.CoMapFunction;
 
 import java.nio.charset.StandardCharsets;
 
@@ -41,7 +36,7 @@ public class Hello11SinkCommon {
         DataStreamSink<Integer> toSocket = source.writeToSocket("localhost", 9999, new SerializationSchema<Integer>() {
             @Override
             public byte[] serialize(Integer element) {
-                return element.toString().getBytes(StandardCharsets.UTF_8);
+                return (element + " ").getBytes(StandardCharsets.UTF_8);
             }
         });
 

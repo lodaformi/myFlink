@@ -28,12 +28,14 @@ public class Hello03WordCountByDataStream {
         SingleOutputStreamOperator<String> flatMapOp = streamSource.flatMap(new FlatMapFunction<String, String>() {
             @Override
             public void flatMap(String value, Collector<String> out) throws Exception {
-                String[] words = value.split(" ");
+                String[] words = value.split("\\s+");
                 for (String word : words) {
                     out.collect(word);
                 }
             }
         });
+
+//        streamSource.flatMap((str, out)->out.collect(Arrays.stream(str.split("\\s+")))).print();
 
         SingleOutputStreamOperator<Tuple2<String, Integer>> mapOp = flatMapOp.map(new MapFunction<String, Tuple2<String, Integer>>() {
             @Override

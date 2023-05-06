@@ -30,12 +30,16 @@ public class Hello17Partitioner {
         //sink
 //        mapUpper.global().print("globalPartitioner ").setParallelism(4);
 //        mapUpper.rebalance().print("rebalancePartitioner ").setParallelism(3);
-//        mapUpper.rescale().print("rescalePartitioner ").setParallelism(4);
+        //上游4，下游2：上游1/2到下游1，上游3/4到下游2
+        //上游2，下游4：上游1到下游1/2，上游2到下游3/4
+        //上游4，下游3：上游1到下游1，上游2到下游2，上游3/4到下游3
+        //上游2，下游3：上游1到下游1/2，上游3到下游3
+        mapUpper.rescale().print("rescalePartitioner ").setParallelism(3);
 //        mapUpper.shuffle().print("shufflePartitioner ").setParallelism(4);
 //        mapUpper.broadcast().print("broadcastPartitioner ").setParallelism(2);
 //        mapUpper.forward().print("forwardPartitioner ").setParallelism(2);
         //并不是每次都是hash到一个分区，为啥？
-          mapUpper.keyBy(word->word).print("keyByPartitioner ").setParallelism(4);
+//          mapUpper.keyBy(word->word).print("keyByPartitioner ").setParallelism(4);
         //custom
 //          mapUpper.partitionCustom(new Partitioner<String>() {
 //              @Override
@@ -51,7 +55,7 @@ public class Hello17Partitioner {
 //              }
 //          }).print("CustomPartitioner ").setParallelism(4);
 
-          //怎么对应上面的传参
+          //lambda表达式
 //          mapUpper.partitionCustom((k, p) -> p-1, v->v).print("CustomPartitioner ").setParallelism(4);
 
         //env exec
