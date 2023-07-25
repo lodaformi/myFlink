@@ -26,7 +26,7 @@ public class Hello11SinkCommon {
 //        source.print();
         //1个并行度时，直接写到文件中
         //多个并行度时，创建文件夹，每个task创建一个文件，存放分配到的数据
-//        source.writeAsText("data/text_"+System.currentTimeMillis());
+        source.writeAsText("data/text_"+System.currentTimeMillis());
 
         //csv必须处理tuple的数据The writeAsCsv() method can only be used on data streams of tuples.
 //        SingleOutputStreamOperator<Tuple2<Integer, Integer>> mapStream = source

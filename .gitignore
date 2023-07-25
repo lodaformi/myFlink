@@ -5,6 +5,7 @@ ckpt/
 *.iml
 # Compiled class file
 *.class
+sinkDir/*
 
 # Log file
 *.log

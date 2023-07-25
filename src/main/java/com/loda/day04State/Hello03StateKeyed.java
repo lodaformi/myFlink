@@ -19,10 +19,16 @@ import java.io.File;
  */
 public class Hello03StateKeyed {
     public static void main(String[] args) throws Exception {
+        Configuration configuration = new Configuration();
+        //指定从哪个ckpt恢复数据
+        configuration.setString("execution.savepoint.path", "D:\\Develop\\bigdata\\myFlink01\\ckpt\\45389ee89c1c9bf83558403ae0dcf8c1\\chk-13");
+
         //运行环境
-        StreamExecutionEnvironment environment = StreamExecutionEnvironment.getExecutionEnvironment();
+        StreamExecutionEnvironment environment = StreamExecutionEnvironment.getExecutionEnvironment(configuration);
         environment.setParallelism(1);
+        //5秒中保存一次checkpoint
         environment.enableCheckpointing(5000);
+        //指定ckpt路径
         environment.getCheckpointConfig().setCheckpointStorage("file:///" + System.getProperty("user.dir") + File.separator + "ckpt");
         //获取数据源【水果:重量】
         DataStreamSource<String> source = environment.socketTextStream("localhost", 9999);
@@ -43,7 +49,6 @@ public class Hello03StateKeyed {
  * 有钱可以为所欲为
  */
 class YjxxtKeyedStateFunction extends RichReduceFunction<Tuple2<String, Integer>> {
-
     //声明一个状态对象
     private ValueState<Tuple2<String, Integer>> valueState;
 

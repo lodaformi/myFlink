@@ -1,16 +1,12 @@
 package com.loda.day02EnvSourceTransSink;
 
-import org.apache.flink.api.common.serialization.SerializationSchema;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.connector.base.DeliveryGuarantee;
 import org.apache.flink.connector.kafka.sink.KafkaRecordSerializationSchema;
 import org.apache.flink.connector.kafka.sink.KafkaSink;
-import org.apache.flink.streaming.api.datastream.DataStreamSink;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-
-import java.nio.charset.StandardCharsets;
 
 /**
  * @Author loda
@@ -36,7 +32,8 @@ public class Hello12SinkToKafka {
                 ).setDeliverGuarantee(DeliveryGuarantee.AT_LEAST_ONCE)
                 .build();
 
-        source.map(word->word +":"+System.currentTimeMillis()).sinkTo(sinkSetting);
+        source.map(word->word +":"+System.currentTimeMillis())
+                .sinkTo(sinkSetting);
 
         //env exec
         environment.execute();

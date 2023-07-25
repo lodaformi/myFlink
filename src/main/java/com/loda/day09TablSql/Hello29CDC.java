@@ -29,9 +29,14 @@ public class Hello29CDC {
                 "     'username' = 'root',\n" +
                 "     'password' = '123456',\n" +
                 "     'database-name' = 'scott',\n" +
-                "     'table-name' = 'dept')");
+                "     'table-name' = 'dept',\n" +
+                " 'server-id'='112233' "+
+//                "     //  全量 + 增量同步   \n" +
+//                "     'scan.startup.mode' = 'initial'   " +
+                ")");
 
         //简单查询
-        tableEnvironment.sqlQuery("select * from flink_cdc_dept").execute().print();
+        tableEnvironment.sqlQuery("select * from flink_cdc_dept ")
+                .execute().print();
     }
 }
